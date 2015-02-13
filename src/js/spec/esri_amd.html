@@ -1,0 +1,71 @@
+<!doctype html>
+<html>
+
+<!--
+  This file is a modification of the jasmine-requirejs.html template from the "Grunt Template Jasmine RequireJS" project licensed under BSD.
+  https://github.com/cloudchen/grunt-template-jasmine-requirejs/blob/master/src/templates/jasmine-requirejs.html
+  
+  This file is part of the "Esri JSAPI Jasmine Template". The Esri JSAPI Jasmine Template is Licensed under an MIT license.
+  The Esri JSAPI Jasmine Template modifications to this file are copyright [2014] Geographic Information Services, Inc.
+-->
+
+<head>
+  <meta charset="utf-8">
+  <title>Jasmine Spec Runner</title>
+  <link rel="shortcut icon" type="image/png" href="<%= temp %>/jasmine_favicon.png">
+  
+  <link rel="stylesheet" type="text/css" href="http://js.arcgis.com/3.11/dijit/themes/claro/claro.css">
+  <link rel="stylesheet" type="text/css" href="http://js.arcgis.com/3.11/esri/css/esri.css" />
+<% css.forEach(function(style){ %>
+  <link rel="stylesheet" type="text/css" href="<%= style %>">
+<% }) %>
+
+<!-- We can include everything but our tests as regular, global script tags -->
+<% with (scripts) { %>
+<% [].concat(polyfills, jasmine, boot, vendor, helpers, reporters).forEach(function(script){ %>
+<script src="<%= script %>"></script>
+<% }) %>
+<% }; %>
+
+<script>
+    var dojoConfig = {
+        parseOnLoad: false,
+        debug: false,
+        cacheBust: false,
+        aliases: [['text', 'dojo/text'], ['domReady', 'dojo/domReady']],
+        packages: [
+            { name: "src", location: location.pathname.replace(/[^\/]+$/, '') + 'src' },
+            { name: "js", location: location.pathname.replace(/[^\/]+$/, '') + 'src/js' },
+            { name: "app", location: location.pathname.replace(/[^\/]+$/, '') + 'src/js/app' },
+            { name: 'jasmine', location: location.pathname.replace(/\/[^\/]+$/, "/") + "src/js/vendor/jasmine-2.0.0-rc5" },
+            { name: 'spec', location: location.pathname.replace(/\/[^\/]+$/, "/") + "src/js/spec" }
+        ]
+    }
+</script>
+
+<script type="text/javascript" src="http://js.arcgis.com/3.11/"></script>
+
+<script>
+    // Delay onLoad function until we are ready
+    var startTests = window.onload;
+    window.onload = null;
+</script>
+
+<!--Each test gets required, and pulls in its own dependencies (i.e., files from the app)-->
+<% with (scripts) { %>
+<script>
+    require([
+  <% [].concat(specs).forEach(function(script){ %>
+    <%= "  '" + script.substring(0, script.length - 3) + "',"%> //strip off '.js'
+  <% }) %>
+    ], function () {
+        startTests();
+    });
+</script>    
+<% }; %>
+
+</head>
+<body>
+    <div id="viewNode" style="display: none;"></div>
+</body>
+</html>
